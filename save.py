@@ -1,3 +1,4 @@
+from bson.objectid import ObjectId
 import pandas
 import os
 import datetime
@@ -95,3 +96,16 @@ if __name__ == "__main__":
         )
 
         print(f"Saved data {collection_name}")
+
+    collection = connection["users"]
+    users = collection.find({"base_user": {"$regex": "^((?!string).)*$"}})
+    counter = 0
+
+    for e in users:
+        _id = e.get('_id')
+        base_user = e.get('base_user')
+        counter += 1
+
+        collection.find_one_and_update({"_id": _id}, {"$set": {"base_user": ObjectId(base_user)}})
+
+        print("User data sanned ", base_user)
